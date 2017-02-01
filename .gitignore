@@ -1,1 +1,8 @@
 .dir-locals.el
+
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+Makefile
+cmake_install.cmake
+test_config.hpp
