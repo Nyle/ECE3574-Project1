@@ -19,7 +19,7 @@ Expression::Expression(double value) {
 
 Expression::Expression(const std::string & value) {
     this->type = String;
-    this->s = value;
+    this->s = value.c_str();
     this->arguments = std::vector<Expression>();
 }
 
@@ -41,17 +41,10 @@ Expression::Expression(const Expression & exp) {
     this->arguments = std::vector<Expression>(exp.arguments);
 }
 
-Expression::~Expression() {
-    using std::string;
-    if (this->type == String) {
-        (&this->s)->string::~string();
-    }
-}
-
 bool Expression::operator==(const Expression & exp) const noexcept {
     return this->type == exp.type && ( // Same type
         // Same value
-        // TODO: two of none type---have same value
+        this->type == None ||
         (this->type == Bool && this->b == exp.b) ||
         (this->type == Double && this->d == exp.d) ||
         (this->type == String && this->s == exp.s)) &&
@@ -59,6 +52,6 @@ bool Expression::operator==(const Expression & exp) const noexcept {
         this->arguments.size() == exp.arguments.size();
 }
 
-void Expression::addargument(Expression & exp) {
+void Expression::addargument(Expression exp) {
     this->arguments.push_back(exp);
 }
