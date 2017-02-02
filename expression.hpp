@@ -5,6 +5,21 @@
 #include <string>
 
 class Expression {
+private:
+    // Field for the value
+    union {
+        bool b;
+        double d;
+        std::string s;
+    };
+    // Field for the type of the value
+    enum Type {
+        None,
+        Bool,
+        Double,
+        String
+    } type;
+            
 public:
 
     // Default construct an Expression of type None
