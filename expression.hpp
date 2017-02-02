@@ -3,23 +3,19 @@
 
 #include <cstdlib>
 #include <string>
+#include <vector>
 
 class Expression {
 private:
-    // Field for the value
+    // Fields for the attom value
     union {
         bool b;
         double d;
         std::string s;
     };
-    // Field for the type of the value
-    enum Type {
-        None,
-        Bool,
-        Double,
-        String
-    } type;
-            
+    // Fields for the type of attom value
+    enum Type {None, Bool, Double, String} type;
+    std::vector<Expression> arguments;
 public:
 
     // Default construct an Expression of type None
@@ -34,9 +30,18 @@ public:
     // Construct an Expression with a single Symbol atom with value
     Expression(const std::string & value);
 
+    // Copy constructor
+    Expression(const Expression & exp);
+
+    // Destructor (handles getting rid of string in union if needed)
+    ~Expression();
+
     // Equality operator for two Expressions, two expressions are equal if the
     // have the same type, atom value, and number of arguments
     bool operator==(const Expression & exp) const noexcept;
+
+    // Add an expression as the last argument
+    void addargument(Expression & exp);
 };
 
 #endif // EXPRESSION_HPP
