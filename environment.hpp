@@ -3,20 +3,24 @@
 
 #include <map>
 #include <string>
+#include <vector>
 #include "expression.hpp"
-
-// This module should define the C++ types and code required to implement the
-// vtscript environment mapping.
+#include "environmentprocedures.hpp"
 
 class Environment {
 private:
-    std::map<std::string, Expression> map;    
+    std::map<std::string, EnvFunc> map;    
 public:
-    // Define a symbol. Returns true on success, false on failure
+    // default constructor
+    Environment();
+    // Define a symbol. Returns true on success, false on failure (literal exp)
     bool define(std::string symbol, Expression exp);
+    // Define a symbol. Returns true on success, false on failure (function)
+    bool define(std::string symbol, EnvFunc func);
     // Retrieve the given symbol. Returns None Expression if symbol is not
     // defined
-    Expression retrieve(std::string symbol);
+    EnvFunc retrieve(std::string symbol);
 };
+
 
 #endif // ENVIRONMENT_H

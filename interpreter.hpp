@@ -4,8 +4,13 @@
 #include <cstdlib>
 #include <fstream>
 #include "expression.hpp"
+#include "environment.hpp"
 
 class Interpreter {
+private:
+    Expression ast;
+    Environment env;
+public:
     // Default construct an Interpreter with the default environment and an
     // empty AST
     Interpreter();
@@ -19,6 +24,9 @@ class Interpreter {
     // the exception message string should document the nature of the semantic
     // error 
     Expression eval();
+
+    // Evaluate the given expression with the given envioronment
+    Expression eval(Expression exp, Environment & env);
 };
     
 #endif // INTERPRETER_HPP
