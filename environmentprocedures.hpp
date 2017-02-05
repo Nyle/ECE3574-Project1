@@ -2,12 +2,8 @@
 #define ENVIRONMENTPROCDURES_HPP
 
 #include <functional>
+#include <vector>
 #include "expression.hpp"
-
-enum Arity {Nullary, Unary, Binary, Ternary, M_ary, Any};
-
-void arity(Arity a, Args args);
-void type(Type t, Args args, bool onlyfirst=false);
 
 class Environment;
 
@@ -31,7 +27,7 @@ struct CmpFn {
 private:
     std::function<bool(float,float)> func;
 public:
-    CmpFn(std::function<bool(float,float)>);
+    CmpFn(std::function<bool(float,float)> func);
     Expression operator()(Args args, Environment &env) const;
 };
 
@@ -39,7 +35,7 @@ struct PlusMulFn {
 private:
     std::function<float(float,float)> func;
 public:
-    PlusMulFn(std::function<float(float,float)>);
+    PlusMulFn(std::function<float(float,float)> func);
     Expression operator()(Args args, Environment &env) const;
 };
 

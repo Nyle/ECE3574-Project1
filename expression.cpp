@@ -1,4 +1,7 @@
 #include "expression.hpp"
+#include "tokenize.hpp"
+#include "environment.hpp"
+#include "interpreter_semantic_error.hpp"
 #include <iostream>
 
 Expression::Expression() {
@@ -6,22 +9,19 @@ Expression::Expression() {
     this->arguments = Args();
 }
 
-Expression::Expression(bool value) {
+Expression::Expression(bool value) : Expression() {
     this->type = Bool;
     this->b = value;
-    this->arguments = Args();
 }
 
-Expression::Expression(double value) {
+Expression::Expression(double value) : Expression() {
     this->type = Number;
     this->d = value;
-    this->arguments = Args();
 }
 
-Expression::Expression(const std::string & value) {
+Expression::Expression(const std::string & value) : Expression() {
     this->type = Symbol;
-    this->s = value.c_str();
-    this->arguments = Args();
+    this->s = value;
 }
 
 Expression::Expression(const Expression & exp) {
@@ -47,15 +47,26 @@ Type Expression::gettype() const {
 }
 
 std::string Expression::getsymbol() const {
-    // TODO: Error if this isn't a symbol
-    return std::string(this->s);
+    if (this->type != Symbol) {
+        throw InterpreterSemanticError(
+            "Expected expression to be of type Symbol");
+    }
+    return this->s;
 }
 
 double Expression::getnumber() const {
+    if (this->type != Number) {
+        throw InterpreterSemanticError(
+            "Expected expression to be of type Number");
+    }
     return this->d;
 }
 
 bool Expression::getbool() const {
+    if (this->type != Bool) {
+        throw InterpreterSemanticError(
+            "Expected expression to be of type Bool");
+    }
     return this->b;
 }
 
@@ -79,19 +90,36 @@ Args Expression::getargs() const {
     return this->arguments;
 }
 
-std::ostream& operator<<(std::ostream &strm, const Expression &exp) {
-    switch (exp.gettype()) {
-    case None:
-        return strm << "(None)";
-        break;
-    case Bool:
-        return strm << (exp.getbool() ? "(True)" : "(False)");
-        break;
-    case Number:
-        return strm << "(" << exp.getnumber() << ")";
-        break;
-    case Symbol:
-        return strm << "(" << exp.getsymbol() << ")";
+Expression Expression::eval(Environment & env) const {
+    if (this->type != Symbol) {
+        return *this;
     }
+    return env.retrieve(this->s)(this->arguments, env);
 }
 
+std::ostream& operator<<(std::ostream &strm, const Expression &exp) {
+    // Output opening parenthesis
+    strm << "(";
+    // Output closing parenthesis
+    switch (exp.gettype()) {
+    case None:
+        strm << "(None)";
+        break;
+    case Bool:
+        strm << (exp.getbool() ? "True" : "False");
+        break;
+    case Number:
+        strm << exp.getnumber();
+        break;
+    case Symbol:
+        strm << exp.getsymbol();
+    }
+    // Output each argument
+    for (const auto &arg: exp.getargs()) {
+        strm << arg;
+    }
+    
+    strm << ")";
+    // Output attom
+    return strm;
+}

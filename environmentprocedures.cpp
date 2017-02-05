@@ -1,6 +1,10 @@
 #include "environmentprocedures.hpp"
 #include "environment.hpp"
+#include "interpreter_semantic_error.hpp"
+#include "expression.hpp"
 
+
+enum Arity {Nullary, Unary, Binary, Ternary, M_ary, Any};
 
 // Throws an error if the number of elements in args doesn't line up with the
 // arity
@@ -14,29 +18,20 @@ void arity(Arity a, Args args) {
         (a == Any)) {
         return;
     } else {
-        // TODO: Throw an error
-    }
-}
-
-void type(Type t, Args args, bool onlyfirst) {
-    if (onlyfirst) {
-        if (args[0].gettype() != t) {
-            // TODO: Throw an error
-        }
-        return;
-    }
-    for(auto const &arg: args) {
-        if (arg.gettype() != t) {
-            // TODO: Throw an error
-        }
+        throw InterpreterSemanticError(
+            (a == Nullary ? "Expected 0 arguments but got" :
+             a == Unary ? "Expected 1 argument but got " :
+             a == Binary ? "Expected 2 arguments but got" :
+             a == Ternary ? "Expected 3 arguments but got" :
+             a == M_ary ? "Expected >= 2 arguments but got" :
+             "Expected undefined number of arguments but got ") + nargs);
     }
 }
 
 Expression NotFn::operator()(Args args, Environment &env) const {
     arity(Unary, args);
-    type(Bool, args);
     
-    return Expression(!args[0].getbool());
+    return Expression(!args[0].eval(env).getbool());
 }
 
 BinaryBoolFn::BinaryBoolFn(std::function<bool(bool,bool)> func) {
@@ -45,76 +40,72 @@ BinaryBoolFn::BinaryBoolFn(std::function<bool(bool,bool)> func) {
 
 Expression BinaryBoolFn::operator()(Args args, Environment &env) const {
     arity(M_ary, args);
-    type(Bool, args);
-    bool res = args[0].getbool();
+    bool res = args[0].eval(env).getbool();
     for(size_t i = 1; i < args.size(); i++) {
-        res = this->func(res, args[i].getbool());
+        res = this->func(res, args[i].eval(env).getbool());
     }
     return Expression(res);
 }
 
-CmpFn::CmpFn(std::function<bool(float,float)>) {
+CmpFn::CmpFn(std::function<bool(float,float)> func) {
     this->func = func;
 }
 
 Expression CmpFn::operator()(Args args, Environment &env) const {
     arity(Binary, args);
-    type(Number, args);
-    return Expression(this->func(args[0].getnumber(), args[1].getnumber()));
+    return Expression(this->func(args[0].eval(env).getnumber(),
+                                 args[1].eval(env).getnumber()));
 }
 
 
-PlusMulFn::PlusMulFn(std::function<float(float,float)>) {
+PlusMulFn::PlusMulFn(std::function<float(float,float)> func) {
     this->func = func;
 }
 
 Expression PlusMulFn::operator()(Args args, Environment &env) const {
     arity(M_ary, args);
-    type(Number, args);
-    double res = args[0].getnumber();
+    double res = args[0].eval(env).getnumber();
     for(size_t i = 1; i < args.size(); i++) {
-        res = this->func(res, args[i].getnumber());
+        res = this->func(res, args[i].eval(env).getnumber());
     }
     return Expression(res);
 }
 
 Expression SubFn::operator()(Args args, Environment &env) const {
     if (args.size() == 1) {// Instead this should be the negative operator
-        type(Number, args);
-        return Expression(-1 * args[0].getnumber());
+        return Expression(-1 * args[0].eval(env).getnumber());
     }
     arity(Binary, args);
-    type(Number, args);
-    return Expression(args[0].getnumber() - args[1].getnumber());
+    return Expression(args[0].eval(env).getnumber() -
+                      args[1].eval(env).getnumber());
 }
 
 Expression DivFn::operator()(Args args, Environment &env) const {
     if (args.size() == 1) {// Instead this should be the negative operator
-        type(Number, args);
-        return Expression(-1 * args[0].getnumber());
+        return Expression(-1 * args[0].eval(env).getnumber());
     }
     arity(Binary, args);
-    type(Number, args);
-    return Expression(args[0].getnumber() / args[1].getnumber());
+    return Expression(args[0].eval(env).getnumber() /
+                      args[1].eval(env).getnumber());
 }
 
 Expression DefineFn::operator()(Args args, Environment &env) const {
     arity(Binary, args);
-    type(Symbol, args, true);
-    if (env.define(args[0].getsymbol(), args[1])) {
-        return args[1]; // TODO: figure out what to actually return here
-    } else {
-        return Expression();
-        // TODO: throw an error
-    }
+    Expression res = args[1].eval(env);
+    env.define(args[0].getsymbol(), res); // Don't evaluate
+    return res;
 }
 
 Expression BeginFn::operator()(Args args, Environment &env) const {
-    return args[args.size() - 1];
+    Expression result;
+    for(auto const &arg: args) {
+        result = arg.eval(env);
+    }
+    return result;
 }
 
 Expression IfFn::operator()(Args args, Environment &env) const {
     arity(Ternary, args);
-    type(Bool, args, true);
-    return args[0].getbool() ? args[1] : args[2];
+    return args[0].eval(env).getbool() ?
+        args[1].eval(env) : args[2].eval(env);
 }

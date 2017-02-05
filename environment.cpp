@@ -1,6 +1,7 @@
 #include <cmath>
 #include <functional>
 #include "environment.hpp"
+#include "interpreter_semantic_error.hpp"
 
 // Make a function 
 EnvFunc makeexpfunc(Expression exp) {
@@ -9,39 +10,31 @@ EnvFunc makeexpfunc(Expression exp) {
     };
 }
 
-bool Environment::define(std::string symbol, Expression exp) {
-    if (!(this->map.count(symbol))) {
-        // store a lambda that returns the expression
-        this->map[symbol] = makeexpfunc(exp);
-        return true;
-    } else {
-        return false;
+void Environment::define(std::string symbol, EnvFunc fun) {
+    if (this->map.count(symbol)) {
+        throw InterpreterSemanticError(
+            "Attempted to redefine symbol: \"" + symbol + "\"");
     }
+    this->map[symbol] = fun;
 }
 
-bool Environment::define(std::string symbol, EnvFunc fun) {
-    if (!(this->map.count(symbol))) {
-        // store a lambda that returns the expression
-        this->map[symbol] = fun;
-        return true;
-    } else {
-        return false;
-    }
+void Environment::define(std::string symbol, Expression exp) {
+    this->define(symbol, makeexpfunc(exp));
 }
 
 EnvFunc Environment::retrieve(std::string symbol) {
     if (this->map.count(symbol)) {
         return this->map[symbol];
     } else {
-        // TODO: handle non-existing error more helpfully
-        // Lambda to return None expression
-        return makeexpfunc(Expression());
+        throw InterpreterSemanticError(
+            "Attempted to access undefined symbol: \"" + symbol + "\"");
     }
 }
 
 Environment::Environment() {
     this->map = std::map<std::string, EnvFunc>();
     // Put in default environment
+    this->define("define", DefineFn());
     this->define("begin", BeginFn());
     this->define("if", IfFn());
     this->define("not", NotFn());

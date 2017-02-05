@@ -9,11 +9,16 @@
 #include "environment.hpp"
 #include "interpreter.hpp"
 
+#include <functional>
+
 int main(int argc, char * argv[]) {
     Interpreter interp = Interpreter();
     std::ifstream in(argv[1]);
-    interp.parse(in);
-    std::cout << interp.eval() << '\n';
+    if (!interp.parse(in)) {
+        std::cout << "There was an error in parsing\n";
+        return EXIT_FAILURE;
+    }
+    std::cout << interp.eval() << "\n";
 
     return EXIT_SUCCESS;
 }

@@ -19,14 +19,13 @@ public:
     // internal AST return true on success, false on failure
     bool parse(std::istream & expression) noexcept;
 
+    void printast(std::ostream & out);
+
     // Evaluate the current AST and return the resulting Expression
     // throws InterpreterSemanticError if a semantic error is encountered
     // the exception message string should document the nature of the semantic
     // error 
     Expression eval();
-
-    // Evaluate the given expression with the given envioronment
-    Expression eval(Expression exp, Environment & env);
 };
     
 #endif // INTERPRETER_HPP

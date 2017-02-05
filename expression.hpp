@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+class Environment;
 class Expression;
 
 typedef std::vector<Expression> Args;
@@ -14,11 +15,9 @@ enum Type {None, Bool, Number, Symbol};
 class Expression {
 private:
     // Fields for the attom value
-    union {
-        bool b;
-        double d;
-        const char * s;
-    };
+    bool b;
+    double d;
+    std::string s;
     // Fields for the type of attom value
     Type type;
     Args arguments;
@@ -60,6 +59,9 @@ public:
 
     // Get the arguments
     Args getargs() const;
+
+    // Return the result of evaluating this expression
+    Expression eval(Environment & env) const;
 };
 
 #endif // EXPRESSION_HPP
