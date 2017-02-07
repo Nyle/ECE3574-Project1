@@ -15,3 +15,6 @@ vtscript
 .vagrant/
 
 *.log
+
+cmake/
+cmake_osx/
