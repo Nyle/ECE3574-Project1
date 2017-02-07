@@ -3,6 +3,7 @@
 #include "environment.hpp"
 #include "interpreter_semantic_error.hpp"
 #include <iostream>
+#include <sstream>
 
 Expression::Expression() {
     this->type = None;
@@ -54,22 +55,28 @@ std::string Expression::getsymbol() const {
     return this->s;
 }
 
-double Expression::getnumber(Environment & env) const {
-    Expression result = this->eval(env);
-    if (result.gettype() != Number) {
+double Expression::getnumber() const {
+    if (this->type != Number) {
         throw InterpreterSemanticError(
             "Error: expected expression to evaluate to Number");
     }
     return this->d;
 }
 
-bool Expression::getbool(Environment & env) const {
-    Expression result = this->eval(env);
+double Expression::getnumber(Environment & env) const {
+    return this->eval(env).getnumber();
+}
+
+bool Expression::getbool() const {
     if (this->type != Bool) {
         throw InterpreterSemanticError(
             "Error: expected expression to evaluate to Bool");
     }
     return this->b;
+}
+
+bool Expression::getbool(Environment & env) const {
+    return this->eval(env).getbool();
 }
 
 bool Expression::operator==(const Expression & exp) const noexcept {
@@ -100,6 +107,7 @@ Expression Expression::eval(Environment & env) const {
 }
 
 std::string Expression::to_string() const {
+    std::stringstream tmp;
     switch (this->type) {
     case None:
         return "()";
@@ -108,7 +116,8 @@ std::string Expression::to_string() const {
         return (this->b ? "True" : "False");
         break;
     case Number:
-        return std::to_string(this->d);
+        tmp << this->d;
+        return tmp.str();
         break;
     case Symbol:
         return this->s;
