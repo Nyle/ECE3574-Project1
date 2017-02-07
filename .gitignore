@@ -11,3 +11,7 @@ test_config.hpp
 
 unittests
 vtscript
+
+.vagrant/
+
+*.log
