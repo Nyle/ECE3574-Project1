@@ -62,6 +62,7 @@ int run(std::istream & in) {
         std::cout << interp.eval() << "\n";
     } catch (InterpreterSemanticError e) {
         std::cerr << e.what() << "\n";
+        return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
 }
