@@ -2,6 +2,7 @@
 #include "environment.hpp"
 #include "interpreter_semantic_error.hpp"
 #include "expression.hpp"
+#include <sstream>
 
 
 enum Arity {Nullary, Unary, Binary, Ternary, M_ary, Any};
@@ -18,14 +19,17 @@ void arity(Arity a, Args args) {
         (a == Any)) {
         return;
     } else {
-        throw InterpreterSemanticError(
-            (a == Nullary ? "Error: Expected 0 arguments but got" :
-             a == Unary ? "Error: Expected 1 argument but got " :
-             a == Binary ? "Error: Expected 2 arguments but got" :
-             a == Ternary ? "Error: Expected 3 arguments but got" :
-             a == M_ary ? "Error: Expected >= 2 arguments but got" :
-             "Error: Expected undefined number of arguments but got ") +
-            nargs);
+        std::stringstream stream;
+        stream << "Error: expected " <<
+            (a == Nullary ? "0 arguments " :
+             a == Unary ? "1 argument  " :
+             a == Binary ? "2 arguments " :
+             a == Ternary ? "3 arguments " :
+             a == M_ary ? ">= 2 arguments " :
+             "undefined number of arguments ") <<
+            "but got " << nargs; 
+        throw InterpreterSemanticError(stream.str());
+                                       
     }
 }
 
