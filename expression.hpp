@@ -32,8 +32,6 @@ public:
     Expression(const std::string & value);
     // Copy constructor
     Expression(const Expression & exp);
-    // Get the type
-    Type gettype() const;
     // Returns the symbol
     std::string getsymbol() const;
     // returns the literal numerical value

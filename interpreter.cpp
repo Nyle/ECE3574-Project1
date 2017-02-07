@@ -1,5 +1,6 @@
 #include "interpreter.hpp"
 #include "tokenize.hpp"
+#include "interpreter_syntax_error.hpp"
 
 // For debugging
 #include <iostream>
@@ -11,8 +12,12 @@ Interpreter::Interpreter() {
 bool Interpreter::parse(std::istream & expression) noexcept {
     TokenList tokens = tokenize(expression);
     TokenList tokenscopy = TokenList(tokens);
-    this->ast = constructast(tokens);
-    return this->ast.gettype() != None;
+    try {
+        this->ast = constructast(tokens);
+        return true;
+    } catch(InterpreterSyntaxError & e) {
+        return false;
+    }
 }
 
 void Interpreter::printast(std::ostream & out) {    

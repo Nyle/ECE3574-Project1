@@ -1,5 +1,6 @@
 #include "tokenize.hpp"
 #include "expression.hpp"
+#include "interpreter_syntax_error.hpp"
 
 #include <ctype.h>
 
@@ -51,7 +52,9 @@ TokenList tokenize(std::istream & in) {
 
 // Converts a token to an expression
 Expression tokentoexpression(Token token) {
-    if (token == CLOSE_TOKEN) { return Expression(); }
+    if (token == CLOSE_TOKEN) {
+        throw InterpreterSyntaxError("Error: unexpeced )");
+    }
     if (token == TRUE) { return Expression(true); }
     if (token == FALSE) { return Expression(false); }
     try {
@@ -66,7 +69,7 @@ Expression constructast(TokenList & tokens) {
     if (tokens.front() == OPEN_TOKEN) { // It's a parenthesized expression
         tokens.pop(); // remove the OPEN_TOKEN
         Expression result = constructast(tokens); // Get attom
-        while(tokens.front() != CLOSE_TOKEN) {// TODO: handle malformed input
+        while(tokens.front() != CLOSE_TOKEN) {
             result.addargument(constructast(tokens)); //get arguments
         }
         tokens.pop(); // Remove the CLOSE_TOKEN

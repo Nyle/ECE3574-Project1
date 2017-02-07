@@ -2,6 +2,7 @@
 #include "tokenize.hpp"
 #include "environment.hpp"
 #include "interpreter_semantic_error.hpp"
+#include "interpreter_syntax_error.hpp"
 #include <iostream>
 #include <sstream>
 
@@ -41,10 +42,6 @@ Expression::Expression(const Expression & exp) {
         break;
     }
     this->arguments = Args(exp.arguments);
-}
-
-Type Expression::gettype() const {
-    return this->type;
 }
 
 std::string Expression::getsymbol() const {
@@ -91,7 +88,10 @@ bool Expression::operator==(const Expression & exp) const noexcept {
 }
 
 void Expression::addargument(Expression exp) {
-    // TODO: This shouldn't be happening if the type is not symbol
+    if (this->type != Symbol) {
+        throw InterpreterSyntaxError(
+            "Error: only symbols can have arguments");
+    }
     this->arguments.push_back(exp);
 }
 
