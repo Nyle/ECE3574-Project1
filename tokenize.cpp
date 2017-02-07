@@ -18,35 +18,32 @@ const Token FALSE = "False";
 
 // Whether or not c is a character that will end any preceding symbol
 bool breakssymbols(char c) {
-    return c == OPEN || c == CLOSE || c == COMMENT || isspace(c);
+    return c == OPEN || c == CLOSE || c == COMMENT || isspace(c) || !isprint(c);
 }
 
 TokenList tokenize(std::istream & in) {
     TokenList tokens; // List of tokens found
-    bool incomment = false;          // If we are in a comment
     Token symbol = "";               // Hold multi-character symbols
     for (char tmp = in.get(); !in.eof(); tmp = in.get()) {
-        if (incomment) {
-            if (tmp == '\n') {
-                incomment = false;
+        if (breakssymbols(tmp)) {
+            if (symbol.length() > 0) {
+                tokens.push(symbol);
+                symbol = "";
             }
-            continue;
-        }
 
-        if (!isprint(tmp)) { continue; }
-
-        if (breakssymbols(tmp) && symbol.length() > 0) {
-            tokens.push(symbol);
-            symbol = "";
-        }
-
-        if (tmp == COMMENT){
-            incomment = true;
-        } else if (tmp == OPEN || tmp == CLOSE) {
-            tokens.push(Token(1, tmp));
-        } else if (!breakssymbols(tmp)) {
+            if (tmp == COMMENT) {
+                // Read to the end of the comment
+                while ((tmp = in.get()) != '\n' && !in.eof()) {}
+            } else if (tmp == OPEN || tmp == CLOSE) {
+                tokens.push(Token(1, tmp));
+            }
+        } else {
             symbol.push_back(tmp);
         }
+    }
+
+    if (symbol.length() > 0) {
+        tokens.push(symbol);
     }
     
     return tokens;
