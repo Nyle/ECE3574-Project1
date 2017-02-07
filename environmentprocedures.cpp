@@ -36,7 +36,7 @@ void arity(Arity a, Args args) {
 Expression NotFn::operator()(Args args, Environment &env) const {
     arity(Unary, args);
     
-    return Expression(!args[0].eval(env).getbool());
+    return Expression(!args[0].getbool(env));
 }
 
 BinaryBoolFn::BinaryBoolFn(std::function<bool(bool,bool)> func) {
@@ -47,7 +47,7 @@ Expression BinaryBoolFn::operator()(Args args, Environment &env) const {
     arity(M_ary, args);
     bool res = args[0].eval(env).getbool();
     for(size_t i = 1; i < args.size(); i++) {
-        res = this->func(res, args[i].eval(env).getbool());
+        res = this->func(res, args[i].getbool(env));
     }
     return Expression(res);
 }
@@ -58,8 +58,8 @@ CmpFn::CmpFn(std::function<bool(float,float)> func) {
 
 Expression CmpFn::operator()(Args args, Environment &env) const {
     arity(Binary, args);
-    return Expression(this->func(args[0].eval(env).getnumber(),
-                                 args[1].eval(env).getnumber()));
+    return Expression(this->func(args[0].getnumber(env),
+                                 args[1].getnumber(env)));
 }
 
 
@@ -69,35 +69,35 @@ PlusMulFn::PlusMulFn(std::function<float(float,float)> func) {
 
 Expression PlusMulFn::operator()(Args args, Environment &env) const {
     arity(M_ary, args);
-    double res = args[0].eval(env).getnumber();
+    double res = args[0].getnumber(env);
     for(size_t i = 1; i < args.size(); i++) {
-        res = this->func(res, args[i].eval(env).getnumber());
+        res = this->func(res, args[i].getnumber(env));
     }
     return Expression(res);
 }
 
 Expression SubFn::operator()(Args args, Environment &env) const {
     if (args.size() == 1) {// Instead this should be the negative operator
-        return Expression(-1 * args[0].eval(env).getnumber());
+        return Expression(-1 * args[0].getnumber(env));
     }
     arity(Binary, args);
-    return Expression(args[0].eval(env).getnumber() -
-                      args[1].eval(env).getnumber());
+    return Expression(args[0].getnumber(env) -
+                      args[1].getnumber(env));
 }
 
 Expression DivFn::operator()(Args args, Environment &env) const {
     if (args.size() == 1) {// Instead this should be the negative operator
-        return Expression(-1 * args[0].eval(env).getnumber());
+        return Expression(-1 * args[0].getnumber(env));
     }
     arity(Binary, args);
-    return Expression(args[0].eval(env).getnumber() /
-                      args[1].eval(env).getnumber());
+    return Expression(args[0].getnumber(env) /
+                      args[1].getnumber(env));
 }
 
 Expression DefineFn::operator()(Args args, Environment &env) const {
     arity(Binary, args);
     Expression res = args[1].eval(env);
-    env.define(args[0].getsymbol(), res); // Don't evaluate
+    env.define(args[0].getsymbol(), res);
     return res;
 }
 
@@ -111,6 +111,6 @@ Expression BeginFn::operator()(Args args, Environment &env) const {
 
 Expression IfFn::operator()(Args args, Environment &env) const {
     arity(Ternary, args);
-    return args[0].eval(env).getbool() ?
+    return args[0].getbool(env) ?
         args[1].eval(env) : args[2].eval(env);
 }

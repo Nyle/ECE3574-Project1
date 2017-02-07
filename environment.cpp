@@ -46,8 +46,8 @@ Environment::Environment() {
     this->define(">=", CmpFn(std::greater_equal<float>()));
     this->define("=", CmpFn(std::equal_to<float>()));
     this->define("+", PlusMulFn(std::plus<float>()));
-    this->define("-", SubFn());
     this->define("*", PlusMulFn(std::multiplies<float>()));
+    this->define("-", SubFn());
     this->define("/", DivFn());
     this->define("pi", Expression(atan2(0, -1)));
 }

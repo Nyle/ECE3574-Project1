@@ -54,18 +54,20 @@ std::string Expression::getsymbol() const {
     return this->s;
 }
 
-double Expression::getnumber() const {
-    if (this->type != Number) {
+double Expression::getnumber(Environment & env) const {
+    Expression result = this->eval(env);
+    if (result.gettype() != Number) {
         throw InterpreterSemanticError(
-            "Error: expected expression to be of type Number");
+            "Error: expected expression to evaluate to Number");
     }
     return this->d;
 }
 
-bool Expression::getbool() const {
+bool Expression::getbool(Environment & env) const {
+    Expression result = this->eval(env);
     if (this->type != Bool) {
         throw InterpreterSemanticError(
-            "Error: expected expression to be of type Bool");
+            "Error: expected expression to evaluate to Bool");
     }
     return this->b;
 }
@@ -97,29 +99,25 @@ Expression Expression::eval(Environment & env) const {
     return env.retrieve(this->s)(this->arguments, env);
 }
 
-std::ostream& operator<<(std::ostream &strm, const Expression &exp) {
-    // Output opening parenthesis
-    strm << "(";
-    // Output closing parenthesis
-    switch (exp.gettype()) {
+std::string Expression::to_string() const {
+    switch (this->type) {
     case None:
-        strm << "(None)";
+        return "()";
         break;
     case Bool:
-        strm << (exp.getbool() ? "True" : "False");
+        return (this->b ? "True" : "False");
         break;
     case Number:
-        strm << exp.getnumber();
+        return std::to_string(this->d);
         break;
     case Symbol:
-        strm << exp.getsymbol();
+        return this->s;
     }
-    // Output each argument
-    for (const auto &arg: exp.getargs()) {
-        strm << arg;
-    }
-    
+}
+
+std::ostream& operator<<(std::ostream &strm, const Expression &exp) {
+    strm << "(" << exp.to_string();
+    for (const auto &arg: exp.getargs()) { strm << arg; }
     strm << ")";
-    // Output attom
     return strm;
 }

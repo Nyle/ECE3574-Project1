@@ -13,6 +13,7 @@
 #include <functional>
 
 int repl();
+int run(std::istream &in, Interpreter & interp);
 int run(std::istream & in);
 
 int main(int argc, char * argv[]) {
@@ -45,16 +46,16 @@ int repl() {
     std::cout << "vtscript> ";
     while (std::getline(std::cin, line)) {
         std::stringstream lstream(line);
-        run(lstream);
+        if (run(lstream, interp) == EXIT_FAILURE) {
+            interp = Interpreter(); // reset on error
+        }
         std::cout << "vtscript> ";
     }
     return EXIT_SUCCESS;
 }
 
-// parse and run the given 
-int run(std::istream & in) {
-    Interpreter interp = Interpreter();
-    if (!interp.parse(in)) {
+int run(std::istream &in, Interpreter & interp) {
+   if (!interp.parse(in)) {
         std::cerr << "Error: There was an error in parsing\n";
         return EXIT_FAILURE;
     }
@@ -65,4 +66,10 @@ int run(std::istream & in) {
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
+}
+
+// parse and run the given 
+int run(std::istream & in) {
+    Interpreter interp = Interpreter();
+    return run(in, interp);
 }

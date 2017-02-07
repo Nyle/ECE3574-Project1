@@ -44,11 +44,11 @@ public:
     // Returns the symbol
     std::string getsymbol() const;
 
-    // Returns the number
-    double getnumber() const;
+    // Evaluates and returns numerical result
+    double getnumber(Environment & env) const;
 
-    // Returns the Boolean
-    bool getbool() const;
+    // Evaluates and returns boolean result
+    bool getbool(Environment & env) const;
 
     // Equality operator for two Expressions, two expressions are equal if the
     // have the same type, atom value, and number of arguments
@@ -62,6 +62,9 @@ public:
 
     // Return the result of evaluating this expression
     Expression eval(Environment & env) const;
+
+    // Return the attom as a string
+    std::string to_string() const;
 };
 
 #endif // EXPRESSION_HPP
