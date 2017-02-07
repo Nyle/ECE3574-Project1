@@ -10,6 +10,7 @@ set(interpreter_src
   environment.hpp environment.cpp
   environmentprocedures.hpp environmentprocedures.cpp
   interpreter.hpp interpreter.cpp
+  interpreter_semantic_error.hpp interpreter_syntax_error.hpp
   )
 
 # EDIT
