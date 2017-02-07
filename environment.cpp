@@ -13,7 +13,7 @@ EnvFunc makeexpfunc(Expression exp) {
 void Environment::define(std::string symbol, EnvFunc fun) {
     if (this->map.count(symbol)) {
         throw InterpreterSemanticError(
-            "Attempted to redefine symbol: \"" + symbol + "\"");
+            "Error: can not redefine symbol: \"" + symbol + "\"");
     }
     this->map[symbol] = fun;
 }
@@ -27,7 +27,7 @@ EnvFunc Environment::retrieve(std::string symbol) {
         return this->map[symbol];
     } else {
         throw InterpreterSemanticError(
-            "Attempted to access undefined symbol: \"" + symbol + "\"");
+            "Error: undefined symbol: \"" + symbol + "\"");
     }
 }
 

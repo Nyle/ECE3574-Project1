@@ -28,12 +28,12 @@ int main(int argc, char * argv[]) {
     } else if (argc == 2) {     // Run from a file
         std::ifstream in(argv[1]);
         if (!in.is_open()) {
-            std::cerr << "Unable to open the given file\n";
+            std::cerr << "Error: unable to open the given file\n";
             return EXIT_FAILURE;
         }
         return run(in);
     } else {
-        std::cerr << "Too many inputs\n";
+        std::cerr << "Error: Too many inputs\n";
         return EXIT_FAILURE;
     }
 }
@@ -55,13 +55,12 @@ int repl() {
 int run(std::istream & in) {
     Interpreter interp = Interpreter();
     if (!interp.parse(in)) {
-        std::cerr << "There was an error in parsing\n";
+        std::cerr << "Error: There was an error in parsing\n";
         return EXIT_FAILURE;
     }
     try {
         std::cout << interp.eval() << "\n";
     } catch (InterpreterSemanticError e) {
-        std::cerr << "A semantic error occured:\n";
         std::cerr << e.what() << "\n";
     }
     return EXIT_SUCCESS;

@@ -49,7 +49,7 @@ Type Expression::gettype() const {
 std::string Expression::getsymbol() const {
     if (this->type != Symbol) {
         throw InterpreterSemanticError(
-            "Expected expression to be of type Symbol");
+            "Error: expected expression to be of type Symbol");
     }
     return this->s;
 }
@@ -57,7 +57,7 @@ std::string Expression::getsymbol() const {
 double Expression::getnumber() const {
     if (this->type != Number) {
         throw InterpreterSemanticError(
-            "Expected expression to be of type Number");
+            "Error: expected expression to be of type Number");
     }
     return this->d;
 }
@@ -65,7 +65,7 @@ double Expression::getnumber() const {
 bool Expression::getbool() const {
     if (this->type != Bool) {
         throw InterpreterSemanticError(
-            "Expected expression to be of type Bool");
+            "Error: expected expression to be of type Bool");
     }
     return this->b;
 }

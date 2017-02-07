@@ -19,12 +19,13 @@ void arity(Arity a, Args args) {
         return;
     } else {
         throw InterpreterSemanticError(
-            (a == Nullary ? "Expected 0 arguments but got" :
-             a == Unary ? "Expected 1 argument but got " :
-             a == Binary ? "Expected 2 arguments but got" :
-             a == Ternary ? "Expected 3 arguments but got" :
-             a == M_ary ? "Expected >= 2 arguments but got" :
-             "Expected undefined number of arguments but got ") + nargs);
+            (a == Nullary ? "Error: Expected 0 arguments but got" :
+             a == Unary ? "Error: Expected 1 argument but got " :
+             a == Binary ? "Error: Expected 2 arguments but got" :
+             a == Ternary ? "Error: Expected 3 arguments but got" :
+             a == M_ary ? "Error: Expected >= 2 arguments but got" :
+             "Error: Expected undefined number of arguments but got ") +
+            nargs);
     }
 }
 
