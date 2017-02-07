@@ -45,7 +45,7 @@ BinaryBoolFn::BinaryBoolFn(std::function<bool(bool,bool)> func) {
 
 Expression BinaryBoolFn::operator()(Args args, Environment &env) const {
     arity(M_ary, args);
-    bool res = args[0].eval(env).getbool();
+    bool res = args[0].getbool(env);
     for(size_t i = 1; i < args.size(); i++) {
         res = this->func(res, args[i].getbool(env));
     }
