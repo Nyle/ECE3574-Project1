@@ -13,6 +13,10 @@ bool Interpreter::parse(std::istream & expression) noexcept {
     try {
         TokenList tokens = tokenize(expression);
         this->ast = constructast(tokens);
+        if (tokens.size() != 0) {
+            this->parsingerror = "Error: Extra Input";
+            return false;
+        }
         return true;
     } catch(InterpreterSyntaxError & e) {
         this->parsingerror = e.what();
