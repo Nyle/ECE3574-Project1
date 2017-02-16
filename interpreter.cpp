@@ -10,14 +10,18 @@ Interpreter::Interpreter() {
 }
 
 bool Interpreter::parse(std::istream & expression) noexcept {
-    TokenList tokens = tokenize(expression);
-    TokenList tokenscopy = TokenList(tokens);
     try {
+        TokenList tokens = tokenize(expression);
         this->ast = constructast(tokens);
         return true;
     } catch(InterpreterSyntaxError & e) {
+        this->parsingerror = e.what();
         return false;
     }
+}
+
+std::string Interpreter::getparsingerror() const {
+    return this->parsingerror;
 }
 
 void Interpreter::printast(std::ostream & out) {    

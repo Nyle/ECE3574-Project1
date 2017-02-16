@@ -11,23 +11,17 @@ enum Arity {Nullary, Unary, Binary, Ternary, M_ary, Any};
 // arity
 void arity(Arity a, Args args) {
     size_t nargs = args.size();
-    if ((a == Nullary && nargs == 0) ||
-        (a == Unary && nargs == 1) ||
-        (a == Binary && nargs == 2) ||
-        (a == Ternary && nargs == 3) ||
-        (a == M_ary && nargs >= 2) ||
-        (a == Any)) {
+    if ((a == Nullary && nargs == 0) || (a == Unary && nargs == 1) ||
+        (a == Binary && nargs == 2) || (a == Ternary && nargs == 3) ||
+        (a == M_ary && nargs >= 2) || (a == Any)) {
         return;
     } else {
         std::stringstream stream;
-        stream << "Error: expected " <<
-            (a == Nullary ? "0 arguments " :
-             a == Unary ? "1 argument  " :
-             a == Binary ? "2 arguments " :
-             a == Ternary ? "3 arguments " :
-             a == M_ary ? ">= 2 arguments " :
-             "undefined number of arguments ") <<
-            "but got " << nargs; 
+        stream << "Error: expected " << (
+            a == Nullary ? "0 arguments " : a == Unary ? "1 argument  " :
+            a == Binary ? "2 arguments " : a == Ternary ? "3 arguments " :
+            a == M_ary ? ">= 2 arguments " : "undefined number of arguments "
+            ) << "but got " << nargs; 
         throw InterpreterSemanticError(stream.str());
                                        
     }
@@ -35,7 +29,6 @@ void arity(Arity a, Args args) {
 
 Expression NotFn::operator()(Args args, Environment &env) const {
     arity(Unary, args);
-    
     return Expression(!args[0].getbool(env));
 }
 

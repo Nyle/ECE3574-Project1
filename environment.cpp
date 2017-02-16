@@ -3,7 +3,7 @@
 #include "environment.hpp"
 #include "interpreter_semantic_error.hpp"
 
-// Make a function 
+// Make a function that just returns the expression
 EnvFunc makeexpfunc(Expression exp) {
     return [exp](Args args, Environment &env) {
         return exp;

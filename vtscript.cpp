@@ -58,8 +58,8 @@ int repl() {
 
 int run(std::istream &in, Interpreter & interp) {
    if (!interp.parse(in)) {
-        std::cerr << "Error: There was an error in parsing\n";
-        return EXIT_FAILURE;
+       std::cerr << interp.getparsingerror() << "\n";
+       return EXIT_FAILURE;
     }
     try {
         std::cout << interp.eval() << "\n";

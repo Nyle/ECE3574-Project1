@@ -1,5 +1,4 @@
 #include "expression.hpp"
-#include "tokenize.hpp"
 #include "environment.hpp"
 #include "interpreter_semantic_error.hpp"
 #include "interpreter_syntax_error.hpp"
@@ -100,9 +99,7 @@ Args Expression::getargs() const {
 }
 
 Expression Expression::eval(Environment & env) const {
-    if (this->type != Symbol) {
-        return *this;
-    }
+    if (this->type != Symbol) { return *this; }
     return env.retrieve(this->s)(this->arguments, env);
 }
 

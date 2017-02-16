@@ -31,7 +31,6 @@ TokenList tokenize(std::istream & in) {
                 tokens.push(symbol);
                 symbol = "";
             }
-
             if (tmp == COMMENT) {
                 // Read to the end of the comment
                 while ((tmp = in.get()) != '\n' && !in.eof()) {}
@@ -42,11 +41,8 @@ TokenList tokenize(std::istream & in) {
             symbol.push_back(tmp);
         }
     }
-
-    if (symbol.length() > 0) {
-        tokens.push(symbol);
-    }
-    
+    // If we hit EOF while parsing a symbol
+    if (symbol.length() > 0) { tokens.push(symbol); }
     return tokens;
 }
 
@@ -57,17 +53,22 @@ Expression tokentoexpression(Token token) {
     }
     if (token == TRUE) { return Expression(true); }
     if (token == FALSE) { return Expression(false); }
-    try {
-        double value = stod(token);
-        return Expression(value);
+    try { // Try to interpret token as a double
+        return Expression(stod(token));
     } catch (std::invalid_argument & e){
         return Expression(token);
     }
 }
 
 Expression constructast(TokenList & tokens) {
+    if (tokens.empty()) {
+        throw InterpreterSyntaxError("Error: unexpected EOF");
+    }
     if (tokens.front() == OPEN_TOKEN) { // It's a parenthesized expression
         tokens.pop(); // remove the OPEN_TOKEN
+        if (tokens.empty()) {
+            throw InterpreterSyntaxError("Error: unexpected EOF");
+        }
         Expression result = constructast(tokens); // Get attom
         while(tokens.front() != CLOSE_TOKEN) {
             result.addargument(constructast(tokens)); //get arguments
