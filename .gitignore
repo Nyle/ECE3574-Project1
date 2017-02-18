@@ -18,3 +18,7 @@ vtscript
 
 cmake/
 cmake_osx/
+
+*.gch
+
+unittests.dSYM
