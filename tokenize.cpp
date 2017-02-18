@@ -49,12 +49,18 @@ TokenList tokenize(std::istream & in) {
 // Converts a token to an expression
 Expression tokentoexpression(Token token) {
     if (token == CLOSE_TOKEN) {
-        throw InterpreterSyntaxError("Error: unexpeced )");
+        throw InterpreterSyntaxError("Error: unexpeced ')'");
     }
     if (token == TRUE) { return Expression(true); }
     if (token == FALSE) { return Expression(false); }
     try { // Try to interpret token as a double
-        return Expression(stod(token));
+        size_t end;
+        double val = stod(token, &end);
+        if (end != token.size()) {
+            throw InterpreterSyntaxError(
+                "Error: symbols must not start with a digit");
+        }
+        return Expression(val);
     } catch (std::invalid_argument & e){
         return Expression(token);
     }
@@ -70,8 +76,11 @@ Expression constructast(TokenList & tokens) {
             throw InterpreterSyntaxError("Error: unexpected EOF");
         }
         Expression result = constructast(tokens); // Get attom
-        while(tokens.front() != CLOSE_TOKEN) {
+        while(!tokens.empty() && tokens.front() != CLOSE_TOKEN) {
             result.addargument(constructast(tokens)); //get arguments
+        }
+        if (tokens.empty()) {
+            throw InterpreterSyntaxError("Error: unexpected EOF");
         }
         tokens.pop(); // Remove the CLOSE_TOKEN
         return result;
