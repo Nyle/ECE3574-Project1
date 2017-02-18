@@ -18,7 +18,11 @@ vtscript
 
 cmake/
 cmake_osx/
+cmake_coverage/
 
 *.gch
 
 unittests.dSYM
+
+Testing/
+
