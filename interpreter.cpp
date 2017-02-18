@@ -12,6 +12,14 @@ Interpreter::Interpreter() {
 bool Interpreter::parse(std::istream & expression) noexcept {
     try {
         TokenList tokens = tokenize(expression);
+        if (tokens.size() == 0) {
+            this->parsingerror = "Error: program can not be blank";
+            return false;
+        }
+        if (tokens.front() != "(") {
+            this->parsingerror = "Error: program must start with '('";
+            return false;
+        }
         this->ast = constructast(tokens);
         if (tokens.size() != 0) {
             this->parsingerror = "Error: Extra Input";
