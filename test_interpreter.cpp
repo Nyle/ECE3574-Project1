@@ -369,3 +369,24 @@ TEST_CASE( "Test all syntactically and semantically CORRECT files.", "[interpret
     REQUIRE(result == expected_result);
   }
 }
+
+TEST_CASE("Test getting parsing error on syntactically invalid file",
+          "[interpreter]") {
+    Interpreter interp;
+    std::string prog = "(begin (define r 10) (* pi (* r r";
+    std::stringstream iss(prog); 
+
+    REQUIRE(interp.parse(iss) == false);
+    std::string error_string = interp.getparsingerror();
+    REQUIRE(error_string.size() > 0);
+}
+
+TEST_CASE("Test printing AST", "[interpreter]") {
+    Interpreter interp;
+    std::string prog = "(begin (define r 10) (* pi (* r r)))";
+    std::stringstream iss(prog); 
+    REQUIRE(interp.parse(iss) == true);
+
+    std::stringstream out;
+    REQUIRE_NOTHROW(interp.printast(out));
+}
