@@ -79,9 +79,6 @@ Expression SubFn::operator()(Args args, Environment &env) const {
 }
 
 Expression DivFn::operator()(Args args, Environment &env) const {
-    if (args.size() == 1) {// Instead this should be the negative operator
-        return Expression(-1 * args[0].getnumber(env));
-    }
     arity(Binary, args);
     return Expression(args[0].getnumber(env) /
                       args[1].getnumber(env));
