@@ -67,9 +67,6 @@ Expression tokentoexpression(Token token) {
 }
 
 Expression constructast(TokenList & tokens) {
-    if (tokens.empty()) {
-        throw InterpreterSyntaxError("Error: unexpected EOF");
-    }
     if (tokens.front() == OPEN_TOKEN) { // It's a parenthesized expression
         tokens.pop(); // remove the OPEN_TOKEN
         if (tokens.empty()) {
