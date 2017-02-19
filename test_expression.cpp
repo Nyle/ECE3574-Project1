@@ -5,6 +5,7 @@
 
 #include "expression.hpp"
 #include "interpreter_syntax_error.hpp"
+#include "interpreter_semantic_error.hpp"
 
 TEST_CASE("Test copying expression of type none", "[expression]") {
     Expression exp = Expression();
@@ -19,9 +20,10 @@ TEST_CASE("Test converting None type expression to string", "[expression]") {
 }
 
 TEST_CASE("Test converting Symbol type expression to string", "[expression]") {
-    Expression exp = Expression("test");
+    std::string attom = "test";
+    Expression exp = Expression(attom);
     std::string expasstring = exp.to_string();
-    REQUIRE(expasstring == "test");
+    REQUIRE(expasstring == attom);
 }
 
 TEST_CASE("Test adding argument to None type expression",
@@ -47,24 +49,25 @@ TEST_CASE("Test adding argument to Bool type expression",
 
 TEST_CASE("Test adding argument to String type expression",
           "[expression]") {
+    std::string attom = "test";
     Expression arg = Expression(5.0);
-    Expression exp = Expression("Test");
+    Expression exp = Expression(attom);
     REQUIRE_NOTHROW(exp.addargument(arg));
 }
 
 TEST_CASE("Test getting Bool value from non Bool expression", "[expression]") {
     Expression exp = Expression();
-    REQUIRE_THROWS_AS(exp.getbool(), InterpreterSyntaxError);
+    REQUIRE_THROWS_AS(exp.getbool(), InterpreterSemanticError);
 }
 
-TEST_CASE("Test getting Symbol value from non Bool expression",
+TEST_CASE("Test getting Symbol value from non Symbol expression",
           "[expression]") {
     Expression exp = Expression();
-    REQUIRE_THROWS_AS(exp.getsymbol(), InterpreterSyntaxError);
+    REQUIRE_THROWS_AS(exp.getsymbol(), InterpreterSemanticError);
 }
 
-TEST_CASE("Test getting Number value from non Bool expression",
+TEST_CASE("Test getting Number value from non Number expression",
           "[expression]") {
     Expression exp = Expression();
-    REQUIRE_THROWS_AS(exp.getnumber(), InterpreterSyntaxError);
+    REQUIRE_THROWS_AS(exp.getnumber(), InterpreterSemanticError);
 }

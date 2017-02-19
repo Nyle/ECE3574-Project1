@@ -19,6 +19,8 @@ set(test_src
   catch.hpp
   unittests.cpp
   test_interpreter.cpp
+  test_expression.cpp
+  test_tokenize.cpp
 )
 
 # EDIT
