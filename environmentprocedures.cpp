@@ -15,16 +15,14 @@ void arity(Arity a, Args args) {
         (a == Binary && nargs == 2) || (a == Ternary && nargs == 3) ||
         (a == M_ary && nargs >= 2) || (a == Any)) {
         return;
-    } else {
-        std::stringstream stream;
-        stream << "Error: expected " << (
-            a == Nullary ? "0 arguments " : a == Unary ? "1 argument  " :
-            a == Binary ? "2 arguments " : a == Ternary ? "3 arguments " :
-            a == M_ary ? ">= 2 arguments " : "undefined number of arguments "
-            ) << "but got " << nargs; 
-        throw InterpreterSemanticError(stream.str());
-                                       
-    }
+    } 
+    std::stringstream stream;
+    stream << "Error: expected " << (
+        a == Nullary ? "0 arguments " : a == Unary ? "1 argument  " :
+        a == Binary ? "2 arguments " : a == Ternary ? "3 arguments " :
+        a == M_ary ? ">= 2 arguments " : "undefined number of arguments "
+        ) << "but got " << nargs; 
+    throw InterpreterSemanticError(stream.str());
 }
 
 Expression NotFn::operator()(Args args, Environment &env) const {

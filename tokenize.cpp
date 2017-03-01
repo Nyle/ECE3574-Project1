@@ -19,7 +19,8 @@ const Token FALSE = "False";
 
 // Whether or not c is a character that will end any preceding symbol
 bool breakssymbols(char c) {
-    return c == OPEN || c == CLOSE || c == COMMENT || isspace(c) || !isprint(c);
+    return c == OPEN || c == CLOSE || c == COMMENT || (isspace(c) != 0) ||
+        (isprint(c) == 0);
 }
 
 TokenList tokenize(std::istream & in) {

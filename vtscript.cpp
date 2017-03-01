@@ -19,24 +19,26 @@ int run(std::istream & in);
 int main(int argc, char * argv[]) {
     if (argc == 1) { // REPL
         return repl();
-    } else if (argc == 3 && std::string(argv[1]) == "-e") { // from cmdline
+    }
+    if (argc == 3 && std::string(argv[1]) == "-e") { // from cmdline
         std::stringstream lstream(argv[2]);
         return run(lstream);
-    } else if (argc == 2 && std::string(argv[1]).substr(0, 2) == "-e") {
+    }
+    if (argc == 2 && std::string(argv[1]).substr(0, 2) == "-e") {
         // from cmdline
         std::stringstream lstream(std::string(argv[1]).substr(2));
         return run(lstream);
-    } else if (argc == 2) {     // Run from a file
+    }
+    if (argc == 2) {     // Run from a file
         std::ifstream in(argv[1]);
         if (!in.is_open()) {
             std::cerr << "Error: unable to open the given file\n";
             return EXIT_FAILURE;
         }
         return run(in);
-    } else {
-        std::cerr << "Error: Too many inputs\n";
-        return EXIT_FAILURE;
-    }
+    } 
+    std::cerr << "Error: Too many inputs\n";
+    return EXIT_FAILURE;
 }
 
 // get input from repl and evaluate untill eof

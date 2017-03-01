@@ -20,7 +20,7 @@ Expression run(const std::string & program){
   if(!ok){
     std::cerr << "Failed to parse: " << program << std::endl; 
   }
-  REQUIRE(ok == true);
+  REQUIRE(ok);
 
   Expression result;
   REQUIRE_NOTHROW(result = interp.eval());
@@ -31,7 +31,7 @@ Expression run(const std::string & program){
 Expression runfile(const std::string & fname){
 
   std::ifstream ifs(fname);
-  REQUIRE(ifs.good() == true);
+  REQUIRE(ifs.good());
   
   Interpreter interp;
     
@@ -39,7 +39,7 @@ Expression runfile(const std::string & fname){
   if(!ok){
     std::cerr << "Failed to parse file: " << fname << std::endl; 
   }
-  REQUIRE(ok == true);
+  REQUIRE(ok);
 
   Expression result;
   REQUIRE_NOTHROW(result = interp.eval());
@@ -57,7 +57,7 @@ TEST_CASE( "Test Interpreter parser with expected input", "[interpreter]" ) {
 
   bool ok = interp.parse(iss);
 
-  REQUIRE(ok == true);
+  REQUIRE(ok);
 }
 
 TEST_CASE( "Test Interpreter parser with truncated input", "[interpreter]" ) {
@@ -68,7 +68,7 @@ TEST_CASE( "Test Interpreter parser with truncated input", "[interpreter]" ) {
   
     Interpreter interp;
     bool ok = interp.parse(iss);
-    REQUIRE(ok == false);
+    REQUIRE(!ok);
   }
   
   {
@@ -77,7 +77,7 @@ TEST_CASE( "Test Interpreter parser with truncated input", "[interpreter]" ) {
 
     Interpreter interp;
     bool ok = interp.parse(iss);
-    REQUIRE(ok == false);
+    REQUIRE(!ok);
   }
 }
 
@@ -90,7 +90,7 @@ TEST_CASE( "Test Interpreter parser with extra input", "[interpreter]" ) {
 
   bool ok = interp.parse(iss);
 
-  REQUIRE(ok == false);
+  REQUIRE(!ok);
 }
 
 TEST_CASE( "Test Interpreter parser with single non-keyword", "[interpreter]" ) {
@@ -102,7 +102,7 @@ TEST_CASE( "Test Interpreter parser with single non-keyword", "[interpreter]" ) 
 
   bool ok = interp.parse(iss);
 
-  REQUIRE(ok == false);
+  REQUIRE(!ok);
 }
 
 TEST_CASE( "Test Interpreter parser with empty input", "[interpreter]" ) {
@@ -114,7 +114,7 @@ TEST_CASE( "Test Interpreter parser with empty input", "[interpreter]" ) {
 
   bool ok = interp.parse(iss);
 
-  REQUIRE(ok == false);
+  REQUIRE(!ok);
 }
 
 TEST_CASE( "Test Interpreter parser with empty expression", "[interpreter]" ) {
@@ -126,7 +126,7 @@ TEST_CASE( "Test Interpreter parser with empty expression", "[interpreter]" ) {
 
   bool ok = interp.parse(iss);
 
-  REQUIRE(ok == false);
+  REQUIRE(!ok);
 }
 
 TEST_CASE( "Test Interpreter parser with bad number string", "[interpreter]" ) {
@@ -138,7 +138,7 @@ TEST_CASE( "Test Interpreter parser with bad number string", "[interpreter]" ) {
 
   bool ok = interp.parse(iss);
 
-  REQUIRE(ok == false);
+  REQUIRE(!ok);
 }
 
 TEST_CASE( "Test Interpreter result with literal expressions", "[interpreter]" ) {
@@ -321,7 +321,7 @@ TEST_CASE( "Test some semantically invalid expresions", "[interpreter]" ) {
       std::istringstream iss(s);
       
       bool ok = interp.parse(iss);
-      REQUIRE(ok == true);
+      REQUIRE(ok);
 
       REQUIRE_THROWS_AS(interp.eval(), InterpreterSemanticError);
     }
@@ -332,12 +332,12 @@ TEST_CASE( "Test file tests/test0.vts", "[interpreter]" ) {
   std::string fname = TEST_FILE_DIR + "/test0.vts";
 
   std::ifstream ifs(fname);
-  REQUIRE(ifs.good() == true);
+  REQUIRE(ifs.good());
   
   Interpreter interp;
     
   bool ok = interp.parse(ifs);
-  REQUIRE(ok == false);
+  REQUIRE(!ok);
 }
 
 TEST_CASE( "Test syntactically INCORRECT files", "[interpreter]" ) {
@@ -345,12 +345,12 @@ TEST_CASE( "Test syntactically INCORRECT files", "[interpreter]" ) {
   std::string fname = TEST_FILE_DIR + "/test1.vts";
 
   std::ifstream ifs(fname);
-  REQUIRE(ifs.good() == true);
+  REQUIRE(ifs.good());
   
   Interpreter interp;
     
   bool ok = interp.parse(ifs);
-  REQUIRE(ok == false);
+  REQUIRE(!ok);
 }
 
 TEST_CASE( "Test all syntactically and semantically CORRECT files.", "[interpreter]" ) {
@@ -376,7 +376,7 @@ TEST_CASE("Test getting parsing error on syntactically invalid file",
     std::string prog = "(begin (define r 10) (* pi (* r r";
     std::stringstream iss(prog); 
 
-    REQUIRE(interp.parse(iss) == false);
+    REQUIRE(!interp.parse(iss));
     std::string error_string = interp.getparsingerror();
     REQUIRE(error_string.size() > 0);
 }
@@ -385,7 +385,7 @@ TEST_CASE("Test printing AST", "[interpreter]") {
     Interpreter interp;
     std::string prog = "(begin (define r 10) (* pi (* r r)))";
     std::stringstream iss(prog); 
-    REQUIRE(interp.parse(iss) == true);
+    REQUIRE(interp.parse(iss));
 
     std::stringstream out;
     REQUIRE_NOTHROW(interp.printast(out));
